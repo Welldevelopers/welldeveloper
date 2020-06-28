@@ -1,0 +1,53 @@
+# welldeveloper
+
+install.packages("tm")  
+install.package("SnowballC") 
+install.packages("wordcloud") 
+install.packages("RColorBrewer") 
+
+library("tm")
+library("SnowballC")
+library("wordcloud")
+library("RColorBrewer")
+library("corpus")
+library(readr)
+
+
+words <- readChar("livro_mateus.txt", file.info("mat_limpo.txt")$size)
+str(words)
+Encoding(words) <- "UTF-8"
+
+library(tm)
+library(dplyr)
+head(df)
+word.corpus <- Corpus(VectorSource(words))
+
+tm_map(word.corpus, PlainTextDocument)
+
+word.corpus<-word.corpus
+
+word.corpus <- tm_map(word.corpus, removeNumbers)
+word.corpus <- tm_map(word.corpus, removePunctuation)
+word.corpus <- tm_map(word.corpus, stripWhitespace)
+
+word.corpus <- tm_map(word.corpus, stemDocument)
+
+word.corpus<-word.corpus%>%
+  tm_map(tolower)%>% ##make all words lowercase
+  tm_map(removeWords, stopwords("por"))
+
+word.corpus <- tm_map(word.corpus, removeWords, c("nao", "diss","porqu", "então","que", 
+                                                  "Ref.", "that", "with", "will", "also", "i'm"))
+
+word.corpus <- tm_map(word.corpus, stemDocument)
+
+word.counts <- as.matrix(TermDocumentMatrix(word.corpus))
+word.freq <- sort(rowSums(word.counts), decreasing = TRUE)
+head(word.freq)
+
+library(wordcloud)  #wordcloud
+set.seed(32)  #be sure to set the seed if you want to reproduce the same again
+
+wordcloud(words = names(word.freq), freq = word.freq, scale = c(4, 0.3), max.words = 100, 
+          random.order = FALSE, rot.per=0.35, 
+          colors=brewer.pal(8, "Dark2"))
