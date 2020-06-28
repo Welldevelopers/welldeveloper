@@ -11,7 +11,7 @@ library("corpus")
 library(readr)
 
 
-words <- readChar("mat_limpo.txt", file.info("mat_limpo.txt")$size)
+words <- readChar("livro_mateus.txt", file.info("mat_limpo.txt")$size)
 str(words)
 Encoding(words) <- "UTF-8"
 
